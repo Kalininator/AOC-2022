@@ -10,7 +10,7 @@ fn main() {
         .iter()
         .map(|section| section.iter().sum())
         .collect();
-    elf_total_calories.sort();
+    elf_total_calories.sort_unstable();
     elf_total_calories.reverse();
 
     let most_calories = elf_total_calories[0];
