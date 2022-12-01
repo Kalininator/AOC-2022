@@ -1,6 +1,5 @@
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
-    let lines = utils::read_file(&args[1]);
+    let lines = utils::read_arg_file_lines();
 
     let split_sections: Vec<Vec<usize>> = lines
         .split(|l| l.is_empty())
