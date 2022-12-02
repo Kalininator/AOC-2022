@@ -2,5 +2,6 @@
 
 members = [
   "utils",
-  "day01"
+  "day01",
+  "day02"
 ]
