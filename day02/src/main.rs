@@ -109,9 +109,7 @@ fn main() {
 
             // Part 1
             let response = Choice::from_str(&response).unwrap();
-            let p1_points_gained =
-                response.value() + Outcome::from_choices(opponent, response).value();
-            p1_points += p1_points_gained;
+            p1_points += response.value() + Outcome::from_choices(opponent, response).value();
 
             // Part 2
             p2_points += desired_outcome.value() + desired_outcome.choice_needed(opponent).value();
