@@ -82,17 +82,16 @@ impl Outcome {
             Self::Win => opponent.defeater(),
         }
     }
-}
 
-fn battle(opponent: Choice, response: Choice) -> u32 {
-    let points_for_choice = response.value();
-    if opponent == response {
-        return points_for_choice + 3;
+    fn from_choices(opponent: Choice, response: Choice) -> Self {
+        if opponent == response {
+            return Self::Draw;
+        }
+        if response.beats(opponent) {
+            return Self::Win;
+        }
+        Self::Lose
     }
-    if response.beats(opponent) {
-        return points_for_choice + 6;
-    }
-    points_for_choice
 }
 
 fn main() {
@@ -110,7 +109,8 @@ fn main() {
 
             // Part 1
             let response = Choice::from_str(&response).unwrap();
-            let p1_points_gained = battle(opponent, response);
+            let p1_points_gained =
+                response.value() + Outcome::from_choices(opponent, response).value();
             p1_points += p1_points_gained;
 
             // Part 2
