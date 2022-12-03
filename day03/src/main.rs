@@ -50,8 +50,6 @@ fn part_2(rucksacks: &[String]) -> u32 {
 }
 
 fn main() {
-    println!("{}", 'a' as u32);
-    println!("{}", 'A' as u32);
     let rucksacks = utils::read_arg_file_lines();
     let p1 = part_1(&rucksacks);
     let p2 = part_2(&rucksacks);
