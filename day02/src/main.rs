@@ -1,7 +1,5 @@
+use sscanf::sscanf;
 use std::str::FromStr;
-
-#[macro_use]
-extern crate scan_fmt;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum Choice {
@@ -99,21 +97,16 @@ fn main() {
     let mut p1_points: u32 = 0;
     let mut p2_points: u32 = 0;
     for line in lines.iter() {
-        if let Ok((opponent, response)) = scan_fmt!(
-            line,    // input string
-            "{} {}", // format
-            String, String
-        ) {
-            let opponent = Choice::from_str(&opponent).unwrap();
-            let desired_outcome = Outcome::from_str(&response).unwrap();
+        let (opponent, response) = sscanf!(line, "{String} {String}",).unwrap();
+        let opponent = Choice::from_str(&opponent).unwrap();
+        let desired_outcome = Outcome::from_str(&response).unwrap();
 
-            // Part 1
-            let response = Choice::from_str(&response).unwrap();
-            p1_points += response.value() + Outcome::from_choices(opponent, response).value();
+        // Part 1
+        let response = Choice::from_str(&response).unwrap();
+        p1_points += response.value() + Outcome::from_choices(opponent, response).value();
 
-            // Part 2
-            p2_points += desired_outcome.value() + desired_outcome.choice_needed(opponent).value();
-        }
+        // Part 2
+        p2_points += desired_outcome.value() + desired_outcome.choice_needed(opponent).value();
     }
     println!("Total part 1 points: {p1_points}");
     println!("Total part 2 points: {p2_points}");
