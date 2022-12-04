@@ -7,7 +7,7 @@ fn item_value(item: char) -> u32 {
     item_unicode - 64 + 26
 }
 
-fn part_1(rucksacks: &Vec<String>) -> u32 {
+fn part_1(rucksacks: &[String]) -> u32 {
     let mut total_priority: u32 = 0;
     for rucksack in rucksacks {
         let total_items = rucksack.len();
