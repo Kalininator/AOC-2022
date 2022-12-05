@@ -28,6 +28,7 @@ fn main() {
     for i in 0..chars.len() {
         chars[i].reverse();
     }
+    let mut chars2 = chars.clone();
     println!("Columns: {column_count}");
     println!("Columns: {chars:?}");
     println!("Instructions: ");
@@ -37,7 +38,7 @@ fn main() {
         .collect();
     println!("{:?}", moves);
 
-    for m in moves {
+    for m in &moves {
         for _ in 0..m.amount {
             let c = chars[m.from - 1].pop().unwrap();
             chars[m.to - 1].push(c);
@@ -47,6 +48,20 @@ fn main() {
     for c in chars {
         print!("{}", c.last().unwrap());
     }
+
+    // pt 2
+
+    for m in &moves {
+        let len = &chars2[m.from - 1].len();
+        let mut to_add: Vec<char> = chars2[m.from - 1].drain(len - m.amount..).collect();
+        chars2[m.to - 1].append(&mut to_add);
+    }
+
+    println!("Result: ");
+    for c in chars2 {
+        print!("{}", c.last().unwrap());
+    }
+
     // let foo = sscanf!("move 1 from 2 to 1", "{Move}").unwrap();
     // println!("{} {} {}", foo.amount, foo.from, foo.to);
 }
