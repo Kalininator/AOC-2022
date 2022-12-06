@@ -1,10 +1,10 @@
-use std::collections::HashSet;
-
 fn marker_location(input: &str, marker_size: usize) -> Option<usize> {
     let chars: Vec<char> = input.chars().collect();
     for (i, w) in chars.windows(marker_size).enumerate() {
-        let set: HashSet<&char> = HashSet::from_iter(w.iter());
-        if set.len() == marker_size {
+        let mut section = w.to_vec();
+        section.sort_unstable();
+        section.dedup();
+        if section.len() == marker_size {
             return Some(i + marker_size);
         }
     }
