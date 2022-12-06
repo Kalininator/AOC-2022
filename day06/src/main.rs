@@ -12,6 +12,6 @@ fn marker_location(input: &str, marker_size: usize) -> Option<usize> {
 }
 fn main() {
     let line = &utils::read_arg_file_lines()[0];
-    println!("Part 1: {:?}", marker_location(&line, 4));
-    println!("Part 2: {:?}", marker_location(&line, 14));
+    println!("Part 1: {:?}", marker_location(line, 4));
+    println!("Part 2: {:?}", marker_location(line, 14));
 }
