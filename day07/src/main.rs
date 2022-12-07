@@ -30,16 +30,10 @@ enum Line {
 }
 
 fn folder_path(dir: &[String]) -> String {
-    if dir.is_empty() {
-        return "".to_string();
-    }
-    format!("/{}", dir.join("/"))
+    format!("{}/", dir.join("/"))
 }
 fn path(dir: &[String], filename: String) -> String {
-    if dir.is_empty() {
-        return format!("/{filename}");
-    }
-    format!("/{}/{filename}", dir.join("/"))
+    format!("{}{filename}", folder_path(dir))
 }
 
 fn folder_size(folder: &str, files: &HashMap<String, usize>) -> usize {
@@ -56,7 +50,7 @@ fn main() {
         .map(|l| sscanf!(l, "{Line}").expect("Invalid terminal line"))
         .collect();
 
-    let mut current_dir: Vec<String> = vec![];
+    let mut current_dir: Vec<String> = vec!["".to_string()];
     let mut files: HashMap<String, usize> = HashMap::new();
     let mut folders: HashSet<String> = HashSet::new();
     folders.insert("/".to_string());
@@ -68,19 +62,17 @@ fn main() {
                         current_dir.pop();
                     }
                     Destination::Root => {
-                        current_dir.drain(0..);
+                        current_dir.drain(1..);
                     }
                     Destination::Child(dir) => {
                         current_dir.push(dir.to_string());
+                        folders.insert(folder_path(&current_dir));
                     }
                 };
             }
             Line::File { size, name } => {
                 let file_path = path(&current_dir, name);
                 files.insert(file_path, size);
-            }
-            Line::Directory(name) => {
-                folders.insert(format!("{}/{name}", folder_path(&current_dir)));
             }
             _ => (),
         }
