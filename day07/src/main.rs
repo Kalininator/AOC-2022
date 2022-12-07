@@ -55,10 +55,6 @@ fn main() {
         .iter()
         .map(|l| sscanf!(l, "{Line}").expect("Invalid terminal line"))
         .collect();
-    println!("Lines:");
-    for line in &lines {
-        println!("{line:?}");
-    }
 
     let mut current_dir: Vec<String> = vec![];
     let mut files: HashMap<String, usize> = HashMap::new();
