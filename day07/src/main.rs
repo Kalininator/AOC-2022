@@ -16,8 +16,8 @@ enum Destination {
 
 #[derive(Debug, sscanf::FromScanf)]
 enum Line {
-    #[sscanf(format = "$ cd {to}")]
-    Cd { to: Destination },
+    #[sscanf(format = "$ cd {}")]
+    Cd(Destination),
 
     #[sscanf(format = "$ ls")]
     Ls,
@@ -25,8 +25,8 @@ enum Line {
     #[sscanf(format = "{size} {name}")]
     File { size: usize, name: String },
 
-    #[sscanf(format = "dir {name}")]
-    Directory { name: String },
+    #[sscanf(format = "dir {}")]
+    Directory(String),
 }
 
 fn folder_path(dir: &[String]) -> String {
@@ -55,6 +55,10 @@ fn main() {
         .iter()
         .map(|l| sscanf!(l, "{Line}").expect("Invalid terminal line"))
         .collect();
+    println!("Lines:");
+    for line in &lines {
+        println!("{line:?}");
+    }
 
     let mut current_dir: Vec<String> = vec![];
     let mut files: HashMap<String, usize> = HashMap::new();
@@ -62,7 +66,7 @@ fn main() {
     folders.insert("/".to_string());
     for line in lines {
         match line {
-            Line::Cd { to } => {
+            Line::Cd(to) => {
                 match to {
                     Destination::Parent => {
                         current_dir.pop();
@@ -79,7 +83,7 @@ fn main() {
                 let file_path = path(&current_dir, name);
                 files.insert(file_path, size);
             }
-            Line::Directory { name } => {
+            Line::Directory(name) => {
                 folders.insert(format!("{}/{name}", folder_path(&current_dir)));
             }
             _ => (),
