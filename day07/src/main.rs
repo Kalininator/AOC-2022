@@ -33,15 +33,15 @@ fn path(dir: &[String], filename: String) -> String {
 fn folder_size(folder: &str, files: &HashMap<String, usize>) -> usize {
     files
         .iter()
-        .filter(|&(k, _v)| k.starts_with(&folder))
-        .map(|f| f.1)
+        .filter(|&(path, _size)| path.starts_with(&folder))
+        .map(|(_path, size)| size)
         .sum()
 }
 
 fn main() {
     let lines: Vec<Line> = utils::read_arg_file_lines()
         .iter()
-        .map(|l| sscanf!(l, "{Line}").unwrap())
+        .map(|l| sscanf!(l, "{Line}").expect("Invalid terminal line"))
         .collect();
 
     let mut current_dir: Vec<String> = vec![];
@@ -85,11 +85,11 @@ fn main() {
     let total_space = 70000000;
     let free_space = total_space - total_used_space;
     let space_to_free = 30000000 - free_space;
-    let mut big_enough_folder_size: Vec<usize> = folders
+    let smallest_big_enough_folder: usize = folders
         .iter()
         .map(|f| folder_size(f, &files))
         .filter(|size| size >= &space_to_free)
-        .collect();
-    big_enough_folder_size.sort_unstable();
-    println!("Part 2: {}", big_enough_folder_size[0]);
+        .min()
+        .unwrap();
+    println!("Part 2: {smallest_big_enough_folder}");
 }
