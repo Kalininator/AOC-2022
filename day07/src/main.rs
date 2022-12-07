@@ -6,11 +6,14 @@ use std::collections::HashSet;
 enum Line {
     #[sscanf(format = "$ cd {to}")]
     Cd { to: String },
+
     #[sscanf(format = "$ ls")]
     Ls,
-    #[sscanf(format = "{} {}")]
+
+    #[sscanf(format = "{size} {name}")]
     File { size: usize, name: String },
-    #[sscanf(format = "dir {}")]
+
+    #[sscanf(format = "dir {name}")]
     Directory { name: String },
 }
 
