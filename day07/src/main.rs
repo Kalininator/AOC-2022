@@ -3,9 +3,21 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 
 #[derive(Debug, sscanf::FromScanf)]
+enum Destination {
+    #[sscanf(format = "/")]
+    Root,
+
+    #[sscanf(format = "..")]
+    Parent,
+
+    #[sscanf(format = "{}")]
+    Child(String),
+}
+
+#[derive(Debug, sscanf::FromScanf)]
 enum Line {
     #[sscanf(format = "$ cd {to}")]
-    Cd { to: String },
+    Cd { to: Destination },
 
     #[sscanf(format = "$ ls")]
     Ls,
@@ -51,14 +63,14 @@ fn main() {
     for line in lines {
         match line {
             Line::Cd { to } => {
-                match to.as_str() {
-                    ".." => {
+                match to {
+                    Destination::Parent => {
                         current_dir.pop();
                     }
-                    "/" => {
+                    Destination::Root => {
                         current_dir.drain(0..);
                     }
-                    dir => {
+                    Destination::Child(dir) => {
                         current_dir.push(dir.to_string());
                     }
                 };
