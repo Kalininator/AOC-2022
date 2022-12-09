@@ -20,40 +20,68 @@ struct Instruction {
     distance: u32,
 }
 
-fn move_head(head: &mut (i32, i32), direction: &Direction) {
+#[derive(Eq, Hash, PartialEq, Debug, Clone, Copy, Default)]
+struct Position {
+    x: i32,
+    y: i32,
+}
+
+#[derive(Debug)]
+struct Node {
+    position: Position,
+    history: HashSet<Position>,
+}
+impl Default for Node {
+    fn default() -> Self {
+        let mut history = HashSet::new();
+        history.insert(Position::default());
+        Self {
+            position: Position::default(),
+            history,
+        }
+    }
+}
+impl Node {
+    fn record_tail(&mut self) {
+        self.history.insert(self.position);
+    }
+}
+
+fn move_head(head: &mut Node, direction: &Direction) {
     match direction {
-        Direction::Up => head.1 += 1,
-        Direction::Down => head.1 -= 1,
-        Direction::Left => head.0 -= 1,
-        Direction::Right => head.0 += 1,
+        Direction::Up => head.position.y += 1,
+        Direction::Down => head.position.y -= 1,
+        Direction::Left => head.position.x -= 1,
+        Direction::Right => head.position.x += 1,
     };
 }
 
-fn distance(head: &(i32, i32), tail: &(i32, i32)) -> u32 {
-    let h_dist = (head.0 - tail.0).abs();
-    let v_dist = (head.1 - tail.1).abs();
+fn distance(head: &Node, tail: &Node) -> u32 {
+    let h_dist = (head.position.x - tail.position.x).abs();
+    let v_dist = (head.position.y - tail.position.y).abs();
     std::cmp::max(h_dist, v_dist).try_into().unwrap()
 }
 
-fn move_tail(tail: &mut (i32, i32), head: &(i32, i32), direction: &Direction) {
+fn move_tail(tail: &mut Node, head: &Node, direction: &Direction) {
     match direction {
         Direction::Up => {
-            tail.0 = head.0;
-            tail.1 = head.1 - 1;
+            tail.position.x = head.position.x;
+            tail.position.y = head.position.y - 1;
         }
         Direction::Down => {
-            tail.0 = head.0;
-            tail.1 = head.1 + 1;
+            tail.position.x = head.position.x;
+            tail.position.y = head.position.y + 1;
         }
         Direction::Left => {
-            tail.1 = head.1;
-            tail.0 = head.0 + 1;
+            tail.position.y = head.position.y;
+            tail.position.x = head.position.x + 1;
         }
         Direction::Right => {
-            tail.1 = head.1;
-            tail.0 = head.0 - 1;
+            tail.position.y = head.position.y;
+            tail.position.x = head.position.x - 1;
         }
     };
+    tail.record_tail();
 }
 
 fn main() {
@@ -63,24 +91,20 @@ fn main() {
         .map(|l| sscanf!(&l, "{Instruction}").unwrap())
         .collect();
 
-    let mut tail_positions: HashSet<(i32, i32)> = HashSet::new();
-    tail_positions.insert((0, 0));
-
-    let mut head: (i32, i32) = (0, 0);
-    let mut tail: (i32, i32) = (0, 0);
+    let mut head: Node = Node::default();
+    let mut tail: Node = Node::default();
 
     for i in instructions {
         for _ in 0..i.distance {
             println!("{:?}", i.direction);
             move_head(&mut head, &i.direction);
-            println!("Head at: {head:?}");
+            println!("Head at: {:?}", head.position);
             if distance(&head, &tail) > 1 {
                 println!("Tail needs to move");
                 move_tail(&mut tail, &head, &i.direction);
-                tail_positions.insert(tail);
-                println!("tail moved to {tail:?}");
+                println!("tail moved to {:?}", tail.position);
             }
         }
     }
-    println!("Tail positions: {}", tail_positions.len());
+    println!("Tail positions: {}", tail.history.len());
 }
