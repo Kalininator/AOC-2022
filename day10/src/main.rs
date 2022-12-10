@@ -22,7 +22,7 @@ fn main() {
     let mut register: i32 = 1;
     let mut processing: bool = false;
 
-    let mut pixels: Vec<char> = vec![];
+    let mut pixels: Vec<bool> = vec![];
 
     loop {
         if watched_cycles.contains(&cycle) {
@@ -34,11 +34,7 @@ fn main() {
         let i = instructions.last().unwrap();
 
         let pos = (cycle - 1) % 40;
-        if pos <= register + 1 && pos >= register - 1 {
-            pixels.push('#');
-        } else {
-            pixels.push(' ');
-        }
+        pixels.push(pos <= register + 1 && pos >= register - 1);
 
         match i {
             Instruction::Addx(v) => {
@@ -58,11 +54,14 @@ fn main() {
         cycle += 1;
     }
 
-    println!("{total_signal}");
+    println!("Part 1: {total_signal}");
+    println!("Part 2:");
+
     for (i, p) in pixels.iter().enumerate() {
         if i % 40 == 0 {
             println!();
         }
-        print!("{p}");
+        let display_char: char = if *p { '#' } else { ' ' };
+        print!("{display_char}");
     }
 }
