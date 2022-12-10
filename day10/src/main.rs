@@ -22,6 +22,8 @@ fn main() {
     let mut register: i32 = 1;
     let mut processing: bool = false;
 
+    let mut pixels: Vec<char> = vec![];
+
     loop {
         if watched_cycles.contains(&cycle) {
             total_signal += register * cycle;
@@ -30,6 +32,13 @@ fn main() {
             break;
         }
         let i = instructions.last().unwrap();
+
+        let pos = (cycle - 1) % 40;
+        if pos <= register + 1 && pos >= register - 1 {
+            pixels.push('#');
+        } else {
+            pixels.push(' ');
+        }
 
         match i {
             Instruction::Addx(v) => {
@@ -50,4 +59,10 @@ fn main() {
     }
 
     println!("{total_signal}");
+    for (i, p) in pixels.iter().enumerate() {
+        if i % 40 == 0 {
+            println!();
+        }
+        print!("{p}");
+    }
 }
