@@ -85,26 +85,7 @@ fn move_tail(tail: &mut Node, head: &Position) {
     tail.record_tail();
 }
 
-fn part_1(instructions: &Vec<Instruction>) {
-    let mut head: Node = Node::default();
-    let mut tail: Node = Node::default();
-
-    for i in instructions {
-        for _ in 0..i.distance {
-            // println!("{:?}", i.direction);
-            move_head(&mut head, &i.direction);
-            // println!("Head at: {:?}", head.position);
-            if distance(&head.position, &tail) > 1 {
-                // println!("Tail needs to move");
-                move_tail(&mut tail, &head.position);
-                // println!("tail moved to {:?}", tail.position);
-            }
-        }
-    }
-    println!("Part 1 tail positions: {}", tail.history.len());
-}
-
-fn part_2(instructions: &Vec<Instruction>, tails: usize) {
+fn tail_positions(instructions: &Vec<Instruction>, tails: usize) -> usize {
     let mut nodes: Vec<Node> = Vec::new();
     for _ in 0..tails + 1 {
         nodes.push(Node::default());
@@ -112,24 +93,17 @@ fn part_2(instructions: &Vec<Instruction>, tails: usize) {
 
     for i in instructions {
         for _ in 0..i.distance {
-            // println!("{:?}", i.direction);
             move_head(&mut nodes[0], &i.direction);
             for node_index in 1..nodes.len() {
                 let head_position = nodes[node_index - 1].position;
                 let dist = distance(&head_position, &nodes[node_index]);
-                // if node_index == tails {
-                //     println!("distance: {dist}");
-                // }
                 if dist > 1 {
                     move_tail(&mut nodes[node_index], &head_position);
                 }
             }
         }
     }
-    println!(
-        "Part 2 tail positions: {}",
-        nodes.last().unwrap().history.len()
-    );
+    nodes.last().unwrap().history.len()
 }
 
 fn main() {
@@ -138,7 +112,6 @@ fn main() {
         .iter()
         .map(|l| sscanf!(&l, "{Instruction}").unwrap())
         .collect();
-    part_1(&instructions);
-    part_2(&instructions, 1);
-    part_2(&instructions, 9);
+    println!("Part 1: {}", tail_positions(&instructions, 1));
+    println!("Part 2: {}", tail_positions(&instructions, 9));
 }
